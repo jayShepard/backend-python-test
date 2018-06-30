@@ -2,7 +2,7 @@ from flask import Flask, g
 import sqlite3
 
 # configuration
-DATABASE = '/tmp/alayatodo.db'
+DATABASE = './tmp/alayatodo.db'
 DEBUG = True
 SECRET_KEY = 'development key'
 USERNAME = 'admin'
@@ -29,6 +29,5 @@ def teardown_request(exception):
     db = getattr(g, 'db', None)
     if db is not None:
         db.close()
-
 
 import alayatodo.views
