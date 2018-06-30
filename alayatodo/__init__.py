@@ -1,16 +1,9 @@
 from flask import Flask, g
 import sqlite3
 
-# configuration
-DATABASE = './tmp/alayatodo.db'
-DEBUG = True
-SECRET_KEY = 'development key'
-USERNAME = 'admin'
-PASSWORD = 'default'
-
-
-app = Flask(__name__)
-app.config.from_object(__name__)
+app = Flask(__name__, instance_relative_config=True)
+app.config.from_object('config')
+app.config.from_pyfile('config.py')
 
 
 def connect_db():

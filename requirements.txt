@@ -1,3 +1,12 @@
-Flask
-Jinja2
-docopt
+click==6.7
+docopt==0.6.2
+Flask==1.0.2
+itsdangerous==0.24
+Jinja2==2.10
+Mako==1.0.7
+MarkupSafe==1.0
+python-dateutil==2.7.3
+python-editor==1.0.3
+requirements==0.1
+six==1.11.0
+Werkzeug==0.14.1
