@@ -5,7 +5,8 @@ from flask import (
     redirect,
     render_template,
     request,
-    session
+    session,
+    flash
     )
 
 
@@ -18,6 +19,9 @@ def home():
 
 @app.route('/login', methods=['GET'])
 def login():
+    if session.get('logged_in'):
+        return redirect('/todo')
+
     return render_template('login.html')
 
 
@@ -27,7 +31,10 @@ def login_POST():
     password = request.form.get('password')
 
     user = User.query.filter_by(username=username, password=password).first()
-    if user:
+
+    if not user:
+        flash('Invalid username or password')
+    else:
         session['user'] = user.to_dict()
         session['logged_in'] = True
         return redirect('/todo')
