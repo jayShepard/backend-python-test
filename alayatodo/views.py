@@ -51,7 +51,14 @@ def logout():
 
 @app.route('/todo/<id>', methods=['GET'])
 def todo(id):
-    todo = Todo.query.filter(Todo.id == id).first()
+    if not session.get('logged_in'):
+        redirect('/login')
+
+    todo = Todo.query.filter_by(
+        id=id, user_id=session.get('user')['id']).first()
+    if not todo:
+        return render_template('404.html'), 404
+
     return render_template('todo.html', todo=todo)
 
 
@@ -60,7 +67,8 @@ def todo(id):
 def todos():
     if not session.get('logged_in'):
         return redirect('/login')
-    todos =  Todo.query.all()
+
+    todos =  Todo.query.filter_by(user_id=session['user']['id']).all()
     return render_template('todos.html', todos=todos)
 
 
@@ -82,7 +90,11 @@ def todos_POST():
 def todo_delete(id):
     if not session.get('logged_in'):
         return redirect('/login')
-    todo = Todo.query.filter(Todo.id == id).first()
+
+    todo = Todo.query.filter_by(id=id, user_id=session['user']['id']).first()
+    if not todo:
+        return render_template('404.html'), 404
+
     g.db.delete(todo)
     g.db.commit()
     return redirect('/todo')

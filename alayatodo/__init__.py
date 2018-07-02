@@ -17,3 +17,4 @@ def teardown_request(exception=None):
 
 
 import alayatodo.views
+import alayatodo.errors
