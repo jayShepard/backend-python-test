@@ -1,4 +1,5 @@
 from alayatodo import app
+from models import User, Todo
 from flask import (
     g,
     redirect,
@@ -25,11 +26,9 @@ def login_POST():
     username = request.form.get('username')
     password = request.form.get('password')
 
-    sql = "SELECT * FROM users WHERE username = '%s' AND password = '%s'";
-    cur = g.db.execute(sql % (username, password))
-    user = cur.fetchone()
+    user = User.query.filter_by(username=username, password=password).first()
     if user:
-        session['user'] = dict(user)
+        session['user'] = user.to_dict()
         session['logged_in'] = True
         return redirect('/todo')
 
@@ -45,8 +44,7 @@ def logout():
 
 @app.route('/todo/<id>', methods=['GET'])
 def todo(id):
-    cur = g.db.execute("SELECT * FROM todos WHERE id ='%s'" % id)
-    todo = cur.fetchone()
+    todo = Todo.query.filter(Todo.id == id).first()
     return render_template('todo.html', todo=todo)
 
 
@@ -55,8 +53,7 @@ def todo(id):
 def todos():
     if not session.get('logged_in'):
         return redirect('/login')
-    cur = g.db.execute("SELECT * FROM todos")
-    todos = cur.fetchall()
+    todos =  Todo.query.all()
     return render_template('todos.html', todos=todos)
 
 
@@ -65,10 +62,11 @@ def todos():
 def todos_POST():
     if not session.get('logged_in'):
         return redirect('/login')
-    g.db.execute(
-        "INSERT INTO todos (user_id, description) VALUES ('%s', '%s')"
-        % (session['user']['id'], request.form.get('description', ''))
-    )
+
+    user_id = session['user']['id']
+    description = request.form.get('description', '')
+    todo = Todo(user_id=user_id, description=description)
+    g.db.add(todo)
     g.db.commit()
     return redirect('/todo')
 
@@ -77,6 +75,7 @@ def todos_POST():
 def todo_delete(id):
     if not session.get('logged_in'):
         return redirect('/login')
-    g.db.execute("DELETE FROM todos WHERE id ='%s'" % id)
+    todo = Todo.query.filter(Todo.id == id).first()
+    g.db.delete(todo)
     g.db.commit()
     return redirect('/todo')
