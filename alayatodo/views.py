@@ -1,5 +1,5 @@
 from alayatodo import app
-from models import User, Todo
+from alayatodo.models import User, Todo
 from alayatodo.forms import LoginForm, TodoForm
 from flask import (
     g,

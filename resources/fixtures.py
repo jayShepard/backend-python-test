@@ -1,6 +1,6 @@
 from typing import List
 from database import db_session
-from models import User, Todo
+from alayatodo.models import User, Todo
 
 
 def _add_users(users: List[dict]):
