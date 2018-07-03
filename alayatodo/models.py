@@ -1,9 +1,12 @@
+import hashlib
 from typing import Dict
+
+from database import Base
+
 from sqlalchemy import Column, Integer, ForeignKey, String, Boolean
 from sqlalchemy.orm import backref, relationship
 from sqlalchemy.ext.hybrid import hybrid_method, hybrid_property
-from database import Base
-import hashlib
+
 
 class User(Base):
     __tablename__ = 'user'
@@ -32,12 +35,13 @@ class User(Base):
 
     @password.setter
     def password(self, plaintext_password):
-        self._password = hashlib.sha3_256(plaintext_password.encode('utf-8')).hexdigest()
+        self._password = hashlib.sha3_256(
+            plaintext_password.encode('utf-8')).hexdigest()
 
     @hybrid_method
     def verify_password(self, plaintext_password):
-        return (hashlib.sha3_256(plaintext_password.encode('utf-8')).hexdigest() ==
-                self._password)
+        return (hashlib.sha3_256(
+            plaintext_password.encode('utf-8')).hexdigest() == self._password)
 
 
 class Todo(Base):
@@ -50,7 +54,8 @@ class Todo(Base):
 
     user = relationship('User', backref=backref('todos', lazy=True))
 
-    def __init__(self, user_id: int, description: str, is_completed: bool):
+    def __init__(self, user_id: int, description: str,
+                 is_completed: bool=False):
         self.user_id = user_id
         self.description = description
         self.is_completed = is_completed

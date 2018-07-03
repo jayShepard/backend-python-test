@@ -1,16 +1,11 @@
 import json
+
 from alayatodo import app
-from alayatodo.models import User, Todo
 from alayatodo.forms import LoginForm, TodoForm
+from alayatodo.models import User, Todo
+
 from flask_paginate import Pagination, get_page_parameter, get_page_args
-from flask import (
-    g,
-    redirect,
-    render_template,
-    request,
-    session,
-    flash
-    )
+from flask import (g, redirect, render_template, request, session, flash)
 
 
 @app.route('/')
@@ -101,16 +96,13 @@ def todos():
         search = True
 
     page = request.args.get(get_page_parameter(), type=int, default=1)
-    todos =  Todo.query.filter_by(user_id=session['user']['id']).offset(offset).limit(per_page)
+    todos =  Todo.query.filter_by(
+        user_id=session['user']['id']).offset(offset).limit(per_page)
 
-    pagination = Pagination(page=page,
-                            total=Todo.query.count(),
-                            search=search,
-                            record_name='todos',
-                            format_total=True,
-                            format_number=True,
-                            per_page=per_page
-                            )
+    pagination = Pagination(page=page, total=Todo.query.count(),
+                            search=search, record_name='todos',
+                            format_total=True, format_number=True,
+                            per_page=per_page)
 
     return render_template(
         'todos.html', todos=todos, form=form, pagination=pagination)
