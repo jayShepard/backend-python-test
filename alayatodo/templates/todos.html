@@ -16,6 +16,7 @@
                 </td>
                 <td>
                     <form method="post" action="{{ url_for('todo_delete', id=todo.id) }}">
+                        {{ form.csrf_token }}
                         <button type="submit" class="btn btn-xs btn-danger"><span class="glyphicon glyphicon-remove glyphicon-white"></span></button>
                     </form>
                 </td>
@@ -23,8 +24,9 @@
         {% endfor %}
         <tr>
             <form method="post" action="{{ url_for('todos_POST') }}">
+                {{ form.csrf_token }}
                 <td colspan="3">
-                    <input type="textbox" name="description" class="small-6 small-center" placeholder="Description...">
+                    {{ form.description(class_="small-6 small-center", type="textbox", placeholder="Description...") }}
                 </td>
                 <td>
                     <button type="submit" class="btn btn-sm btn-primary">Add</button>

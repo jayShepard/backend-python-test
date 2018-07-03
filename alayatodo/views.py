@@ -1,5 +1,6 @@
 from alayatodo import app
 from models import User, Todo
+from alayatodo.forms import LoginForm, TodoForm
 from flask import (
     g,
     redirect,
@@ -19,27 +20,33 @@ def home():
 
 @app.route('/login', methods=['GET'])
 def login():
+    form = LoginForm()
     if session.get('logged_in'):
         return redirect('/todo')
 
-    return render_template('login.html')
+    return render_template('login.html', form=form)
 
 
 @app.route('/login', methods=['POST'])
 def login_POST():
-    username = request.form.get('username')
-    password = request.form.get('password')
+    form = LoginForm()
+    print(form.validate_on_submit())
+    if form.validate_on_submit():
+        username = request.form.get('username')
+        password = request.form.get('password')
 
-    user = User.query.filter_by(username=username, password=password).first()
+        user = User.query.filter_by(
+            username=username, password=password).first()
 
-    if not user:
-        flash('Invalid username or password')
-    else:
+        if not user:
+            flash('Invalid username or password')
+            return redirect('/login')
+
         session['user'] = user.to_dict()
         session['logged_in'] = True
         return redirect('/todo')
 
-    return redirect('/login')
+    return render_template('login.html', form=form)
 
 
 @app.route('/logout')
@@ -54,12 +61,14 @@ def todo(id):
     if not session.get('logged_in'):
         redirect('/login')
 
+    form = TodoForm()
+
     todo = Todo.query.filter_by(
         id=id, user_id=session.get('user')['id']).first()
     if not todo:
         return render_template('404.html'), 404
 
-    return render_template('todo.html', todo=todo)
+    return render_template('todo.html', todo=todo, form=form)
 
 
 @app.route('/todo', methods=['GET'])
@@ -68,8 +77,10 @@ def todos():
     if not session.get('logged_in'):
         return redirect('/login')
 
+    form = TodoForm()
+
     todos =  Todo.query.filter_by(user_id=session['user']['id']).all()
-    return render_template('todos.html', todos=todos)
+    return render_template('todos.html', todos=todos, form=form)
 
 
 @app.route('/todo', methods=['POST'])
