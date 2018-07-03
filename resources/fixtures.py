@@ -10,8 +10,8 @@ def _add_users(users: List[dict]):
                         password=user_dict['password'])
             db_session.add(user)
             db_session.commit()
-        except:
-            continue
+        except Exception as e:
+            print(e)
 
 def _add_todo(todos: List[dict]):
     for todo_dict in todos:
@@ -20,8 +20,8 @@ def _add_todo(todos: List[dict]):
                         description=todo_dict['description'])
             db_session.add(todo)
             db_session.commit()
-        except:
-            continue
+        except Exception as e:
+            print(e)
 
 def populate_database():
     users = [

@@ -1,15 +1,14 @@
 """AlayaNotes
 
 Usage:
-  main.py [run]
-  main.py initdb
+  run.py [run]
+  run.py initdb
 """
 from docopt import docopt
 
 from alayatodo import app
 from database import init_db
 from resources.fixtures import populate_database
-
 
 if __name__ == '__main__':
     args = docopt(__doc__)
