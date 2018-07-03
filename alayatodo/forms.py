@@ -11,4 +11,4 @@ class LoginForm(FlaskForm):
 
 class TodoForm(FlaskForm):
     description = StringField(
-        'description', validators=[Length(1, 255)])
+        'description', validators=[DataRequired(), Length(1, 255)])
