@@ -94,7 +94,25 @@ def todos():
     form = TodoForm()
 
     todos =  Todo.query.filter_by(user_id=session['user']['id']).all()
+
     return render_template('todos.html', todos=todos, form=form)
+
+@app.route('/todo/<id>', methods=['POST'])
+def todos_PUT(id):
+    if not session.get('logged_in'):
+        return redirect('/login')
+    user_id = session['user']['id']
+    is_completed = bool(request.form.get('completed', False))
+
+    todo = Todo.query.filter_by(id=id, user_id=user_id).first()
+    if not todo:
+        return render_template('404.html'), 404
+
+    todo.is_completed = is_completed
+    g.db.add(todo)
+    flash("Task completed!") if is_completed else flash("Task Uncompleted!")
+    g.db.commit()
+    return redirect('/todo')
 
 
 @app.route('/todo', methods=['POST'])
@@ -105,12 +123,12 @@ def todos_POST():
 
     user_id = session['user']['id']
     description = request.form.get('description', '')
-    todo = Todo(user_id=user_id, description=description)
+    todo = Todo(
+        user_id=user_id, description=description, is_completed=False)
     g.db.add(todo)
     g.db.commit()
     flash("You have new thing to do!")
     return redirect('/todo')
-
 
 @app.route('/todo/<id>', methods=['POST'])
 def todo_delete(id):
@@ -123,5 +141,5 @@ def todo_delete(id):
 
     g.db.delete(todo)
     g.db.commit()
-    flash("You have one less thing to do!")
+    flash("You removed a task!")
     return redirect('/todo')

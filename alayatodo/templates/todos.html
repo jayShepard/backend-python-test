@@ -4,9 +4,15 @@
 <div class="col-md-4 col-md-offset-4">
     <h1>Todo List:</h1>
     <table class="table table-striped">
-        <th>#</th><th>User</th><th>Description</th><th></th>
+        <th>Completed</th><th>#</th><th>User</th><th>Description</th><th></th>
         {% for todo in todos %}
             <tr>
+                <td>
+                    <form method="post" action="{{ url_for('todos_PUT', id=todo.id) }}">
+                        {{ form.csrf_token }}
+                        {{ form.completed(checked=todo.is_completed, onChange='this.form.submit()') }}
+                    </form>
+                </td>
                 <td>{{ todo.id }}</td>
                 <td>{{ todo.user_id }}</td>
                 <td>
