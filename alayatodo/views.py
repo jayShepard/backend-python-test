@@ -32,12 +32,15 @@ def login_POST():
         username = request.form.get('username')
         password = request.form.get('password')
 
-        user = User.query.filter_by(
-            username=username, password=password).first()
+        user = User.query.filter_by(username=username).first()
 
         if not user:
-            flash('Invalid username or password')
+            flash('Invalid username')
             return redirect('/login')
+
+        if not user.verify_password(password):
+            flash('Invalid password')
+            return redirect('login')
 
         session['user'] = user.to_dict()
         session['logged_in'] = True
