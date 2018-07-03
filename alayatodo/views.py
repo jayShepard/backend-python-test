@@ -94,6 +94,7 @@ def todos_POST():
     todo = Todo(user_id=user_id, description=description)
     g.db.add(todo)
     g.db.commit()
+    flash("You have new thing to do!")
     return redirect('/todo')
 
 
@@ -108,4 +109,5 @@ def todo_delete(id):
 
     g.db.delete(todo)
     g.db.commit()
+    flash("You have one less thing to do!")
     return redirect('/todo')
