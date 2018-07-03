@@ -1,3 +1,4 @@
+import json
 from alayatodo import app
 from alayatodo.models import User, Todo
 from alayatodo.forms import LoginForm, TodoForm
@@ -70,6 +71,19 @@ def todo(id):
 
     return render_template('todo.html', todo=todo, form=form)
 
+
+@app.route('/todo/<id>/json', methods=['GET'])
+def todo_json(id):
+    if not session.get('logged_in'):
+        return json.dumps(
+            {'error': 401, 'message': "Must be logged in to view"}), 401
+
+    todo = Todo.query.filter_by(
+        id=id, user_id=session.get('user')['id']).first()
+    if not todo:
+        return json.dumps({'error': 404, 'message': 'task not found'}), 404
+
+    return json.dumps(todo.to_dict())
 
 @app.route('/todo', methods=['GET'])
 @app.route('/todo/', methods=['GET'])

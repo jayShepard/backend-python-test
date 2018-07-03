@@ -40,3 +40,10 @@ class Todo(Base):
 
     def __repr__(self):
         return f'<Todo {self.description}>'
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'user_id': self.user_id,
+            'description': self.description
+        }
