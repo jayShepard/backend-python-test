@@ -53,7 +53,7 @@ def login_POST():
 def logout():
     session.pop('logged_in', None)
     session.pop('user', None)
-    return redirect('/')
+    return redirect('/login')
 
 
 @app.route('/todo/<id>', methods=['GET'])
